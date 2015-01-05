@@ -14,8 +14,9 @@ namespace addPrinters
 
         public ManagementScope scope { get; private set; }
 
-        public PrintPort(string name,string computer=".")
+        public PrintPort(string name,string ip)
         {
+            string computer=".";
             ConnectionOptions connOptions = new ConnectionOptions();
             connOptions.Impersonation = ImpersonationLevel.Impersonate;
             
@@ -26,7 +27,7 @@ namespace addPrinters
             ManagementClass portClass = new ManagementClass(scope, portPath, portGetOptions);
             ManagementObject newPort = portClass.CreateInstance();
             
-            newPort["Name"] = "IP_" + name;
+            newPort["Name"] =  name;
             newPort["Protocol"] = 1;
             newPort["HostAddress"] = name;
             newPort["PortNumber"] = 9100;
@@ -54,17 +55,18 @@ namespace addPrinters
 
 
 
-        public Printer(string name, PrintPort port)
+        public Printer(string name, string driver,string location, PrintPort port)
         {
 
             ObjectGetOptions printerGetOptions = new ObjectGetOptions(null, TimeSpan.MaxValue, true);
             ManagementPath printerPath = new ManagementPath("Win32_Printer");
             ManagementClass printerClass = new ManagementClass(port.scope, printerPath, printerGetOptions);
             ManagementObject printer = printerClass.CreateInstance();
-            printer["DriverName"] = "Brother MFC-7840W";
-            printer["Portname"] = "IP_" + name;
+            printer["DriverName"] = driver;
+            printer["Portname"] = name;
             printer["DeviceId"] = name;
             printer["Network"] = true;
+            printer["Location"] = location;
             PutOptions printerPutOptions = new PutOptions();
             printerPutOptions.UseAmendedQualifiers = true;
             printerPutOptions.Type = PutType.UpdateOrCreate;

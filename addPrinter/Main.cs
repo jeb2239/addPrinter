@@ -15,15 +15,20 @@ class ninjaPrinters
     public static void Main()
     {
 
-       
+        installPrinterDb();
+
+      
+      
+      
+      
 
        Console.ReadKey();
     }
 
 
-    public static void checkPrinterDb()
+    public static void installPrinterDb()
     {
-        Dictionary<string, string> dic = new Dictionary<string, string>(); //hash table for fast query
+       // Dictionary<string, string> dic = new Dictionary<string, string>(); //hash table for fast query
         String[] links = {"http://www.columbia.edu/acis/facilities/printers/ninja/acis/js/printers.js",
 "http://www.columbia.edu/acis/facilities/printers/ninja/barnard/js/printers.js",
 "http://www.columbia.edu/acis/facilities/printers/ninja/cait/js/printers.js",
@@ -39,12 +44,23 @@ class ninjaPrinters
             while (!sr.EndOfStream)
             {
                 string anEntry=sr.ReadLine();
-                if (anEntry.StartsWith("//")|| anEntry.Length<3) //i can't believe this has a startsWith method!
+                if (anEntry.TrimStart().StartsWith("//")|| anEntry.Trim()=="") //i can't believe this has a startsWith method!
                 {
                     continue; //skip comments and empty lines
                 }
-
-                
+                else {
+                    try { 
+               Dictionary<string,string> printDic= buildStr(anEntry);
+               Console.WriteLine(printDic["name"]);
+               Console.WriteLine(printDic["addr"]);
+               Console.WriteLine(printDic["driver"]);
+               Console.WriteLine(printDic["location"]);
+                        }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                }
 
 
             }
@@ -67,4 +83,19 @@ class ninjaPrinters
         StreamReader reader = new StreamReader(stream);
         return reader;
     }
+ 
+    public static Dictionary<string,string> buildStr(string lin){
+         String[] strArr = lin.Split(new char[] { '[', ']' });
+       string[] print = strArr[3].Split(',');
+       Dictionary<string, string> printDic = new Dictionary<string, string>();
+        //scrub data
+          printDic["name"]= print[0].Replace("\"", "").Trim();
+          printDic["addr"] = print[1].Replace("\"", "").Trim();
+          printDic["driver"] = print[2].Replace("\"", "").Trim();
+          printDic["location"] = print[3].Replace("\"", "").Trim();
+          
+
+          return printDic;
+    }
+   
 }
