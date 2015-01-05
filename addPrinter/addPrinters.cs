@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Management;
 using System.ComponentModel;
+using System.Collections;
 
 namespace addPrinters
 {
