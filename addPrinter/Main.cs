@@ -38,9 +38,11 @@ class ninjaPrinters
 "http://www.columbia.edu/acis/facilities/printers/ninja/soa/js/printers.js",
 "http://www.columbia.edu/acis/facilities/printers/ninja/ssw/js/printers.js"};
 
-        foreach (string link in links)
-        {
+      //  foreach (string link in links)
+      //  {
+        string link = links[0];
             StreamReader sr = openURL(link);
+            int count = 0;
             while (!sr.EndOfStream)
             {
                 string anEntry=sr.ReadLine();
@@ -50,25 +52,31 @@ class ninjaPrinters
                 }
                 else {
                     try { 
+                
                Dictionary<string,string> printDic= buildStr(anEntry);
+               PrintPort port = new PrintPort(printDic["name"], printDic["addr"]);
+               Printer printer = new Printer(printDic["name"], printDic["addr"],printDic["driver"], printDic["location"], port);
                Console.WriteLine(printDic["name"]);
                Console.WriteLine(printDic["addr"]);
                Console.WriteLine(printDic["driver"]);
                Console.WriteLine(printDic["location"]);
+               count++;
+
                         }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex);
+                        count++;
                     }
                 }
 
-
+                if (count == 2) break;
             }
             
             
 
 
-        }
+      //  }
         
         
         

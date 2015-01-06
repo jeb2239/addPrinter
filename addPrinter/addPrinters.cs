@@ -27,11 +27,14 @@ namespace addPrinters
             ManagementClass portClass = new ManagementClass(scope, portPath, portGetOptions);
             ManagementObject newPort = portClass.CreateInstance();
             
-            newPort["Name"] =  name;
-            newPort["Protocol"] = 1;
-            newPort["HostAddress"] = name;
-            newPort["PortNumber"] = 9100;
+            newPort["Name"] =  ip;
+            newPort["Protocol"] =2 ;//for lpr
+            newPort["HostAddress"] = ip;
+            //newPort["PortNumber"] = 9100;//for lpr 9100 for RAW
             newPort["SNMPEnabled"] = false;
+           // newPort["SNMPCommunity"]="public";
+            newPort["Queue"] = "public";
+            newPort["ByteCount"] = true;
             PutOptions portPutOps = new PutOptions();
             portPutOps.UseAmendedQualifiers = true;
             portPutOps.Type = PutType.UpdateOrCreate;
@@ -55,23 +58,25 @@ namespace addPrinters
 
 
 
-        public Printer(string name, string driver,string location, PrintPort port)
+        public Printer(string name,string ip, string driver,string location, PrintPort port)
         {
-
+            
             ObjectGetOptions printerGetOptions = new ObjectGetOptions(null, TimeSpan.MaxValue, true);
             ManagementPath printerPath = new ManagementPath("Win32_Printer");
             ManagementClass printerClass = new ManagementClass(port.scope, printerPath, printerGetOptions);
             ManagementObject printer = printerClass.CreateInstance();
             printer["DriverName"] = driver;
-            printer["Portname"] = name;
-            printer["DeviceId"] = name;
+            printer["Portname"] = ip;
+            printer["Name"] = name;
+            printer["Shared"] = true;
+            printer["Local"] = true;
             printer["Network"] = true;
             printer["Location"] = location;
             PutOptions printerPutOptions = new PutOptions();
             printerPutOptions.UseAmendedQualifiers = true;
             printerPutOptions.Type = PutType.UpdateOrCreate;
             printer.Put(printerPutOptions);
-
+            
 
 
         }
